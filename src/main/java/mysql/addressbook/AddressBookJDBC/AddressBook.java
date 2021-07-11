@@ -346,7 +346,60 @@ public class AddressBook {
 			System.out.println("Connection is successful!!!!" + con);
 			return con;
 		}
+	/*
+	 * read a data
+	 */
+	public AddressBookService(List<Person> addressBookList) {
+		this();
+		this.addressBookList = addressBookList;
+	}
+
+	private void readPerson(Scanner consoleInputReader) {
+		System.out.println("Enter Id: ");
+		int id = consoleInputReader.nextInt();
+		System.out.println("Enter FirstName: ");
+		String firstName = consoleInputReader.next();
+		System.out.println("Enter LastName: ");
+		String lastName = consoleInputReader.next();
+		System.out.println("Enter Address: ");
+		String address = consoleInputReader.next();
+		System.out.println("Enter City: ");
+		String city = consoleInputReader.next();
+		System.out.println("Enter State: ");
+		String state = consoleInputReader.next();
+		System.out.println("Enter Zip: ");
+		int zip = consoleInputReader.nextInt();
+		System.out.println("Enter PhoneNumber: ");
+		long phoneNumber = consoleInputReader.nextLong();
+		System.out.println("Enter EmailId: ");
+		String emailId = consoleInputReader.next();
+		ArrayList<mysql.addressbook.AddressBookJDBC.Person> addressBookList;
+		addressBookList.add(new Person(id, firstName, lastName, address, city, state, zip, phoneNumber, emailId));
+	}
 	
+	public List<PersonData> readData() {
+		String sql = "SELECT * FROM addressbook";
+		List<PersonData> addressBookList = new ArrayList<>();
+		try (Connection con = this.getConnection()){
+			Statement statement = con.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			while (resultSet.next()) {
+				String FirstName = resultSet.getString("FirstName");
+				String LastName = resultSet.getString("LastName");
+				String Address = resultSet.getString("Address");
+				String City = resultSet.getString("City");
+				String State = resultSet.getString("State");
+				int Zip = resultSet.getInt("Zip");
+				long PhoneNumber = resultSet.getLong("PhoneNumber");
+				String EmailId = resultSet.getString("EmailId");
+				LocalDate startDate = resultSet.getDate("startDate").toLocalDate();
+				addressBookList.add(new PersonData(FirstName, LastName, Address, City, State, Zip, PhoneNumber, EmailId,
+						startDate));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return addressBookList;
 	public static void main(String[] args) throws IOException {
 		AddressBook runner = new AddressBook();
 		runner.displayWelcome();
